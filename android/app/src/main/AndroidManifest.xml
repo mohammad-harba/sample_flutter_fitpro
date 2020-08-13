@@ -91,6 +91,7 @@
             android:value="2" />
     </application>
     <uses-sdk
-        android:maxSdkVersion="17"
-        android:minSdkVersion="8" />
+        android:maxSdkVersion="30"
+        android:minSdkVersion="18"
+        tools:ignore="GradleOverrides" />
 </manifest>

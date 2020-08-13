@@ -57,6 +57,7 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
     private String dataForMethods;
     protected static String mac;
     protected static String name;
+    private String date;
 
     private enum selectedCommandTable {
         Heart,
@@ -66,7 +67,6 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
 
     private static selectedCommandTable selectedCommand;
     static boolean serviceRegistered = false;
-
     public FitProWrapper(MainActivity mainActivity) {
 
         this.mainActivity = mainActivity;
@@ -81,6 +81,7 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
 
         System.out.println("start intent and bind service");
 
+        SaveKeyValues.putStringValues("bluetooth_address", "");
         String savedMAC1 = SaveKeyValues.getStringValues("bluetooth_address", "");
         System.out.println("saved mac after init on create " + savedMAC1);
 
@@ -90,12 +91,17 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
             //SaveKeyValues.putStringValues("bluetooth_address", "");
             String SavedMacBeforeInit = SaveKeyValues.getStringValues("bluetooth_address", "");
             System.out.println("saved mac before init is ------" + SavedMacBeforeInit);
+
             FitProSDK.getFitProSDK().init(mainActivity.getApplication());
+
             String savedMAC = SaveKeyValues.getStringValues("bluetooth_address", "");
             System.out.println("saved mac after init " + savedMAC);
+
             Intent intent = new Intent(mainActivity, BluetoothLeService.class);
             boolean res = mainActivity.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            System.out.println(res);
             leReceiver = new LeReceiver(mainActivity, handler);
+
             leReceiver.registerLeReceiver();
             //mainActivity.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
             serviceRegistered = true;
@@ -154,7 +160,7 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
                 Logdebug(TAG, "Unable to initialize Bluetooth---------------");
 
             }
-            connect();
+            //connect();
         }
 
         @Override
@@ -240,11 +246,15 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
 
     @Override
     public ISDKWrapper setName(String name) {
-        return null;
+        System.out.println("the saved name is -----------"+this.name);
+        this.name=name;
+        System.out.println("name saved after set is -----------"+this.name);
+        return this;
     }
 
     @Override
     public ISDKWrapper setDateForData(String date) {
+        this.date = date;
         return null;
     }
 
@@ -252,6 +262,7 @@ public class FitProWrapper extends SDKWrapper implements ISDKWrapper {
     public void connectDevice() {
 
         System.out.println("connectDevice Called ");
+        connect();
     }
 
     @Override
